@@ -1,7 +1,7 @@
 import { create } from "zustand";
 
 // 종목 키 타입
-export type TickerKey = "WTM" | "BGE" | "CSI" | "SHG" | "MWS";
+export type TickerKey = "SCM" | "TPL" | "HSC" | "HFN" | "HSG";
 
 // 자산(종목) 데이터 타입 정의
 export type Asset = {
@@ -35,8 +35,8 @@ export interface MarketState {
 
 // 초기 종목 데이터
 const initialAssets: Record<TickerKey, Asset> = {
-  WTM: {
-    key: "WTM",
+  SCM: {
+    key: "SCM",
     name: "성규 화학",
     price: 100,
     baseDrift: 0.001,
@@ -50,8 +50,8 @@ const initialAssets: Record<TickerKey, Asset> = {
     efficiency: 0,
     riskEfficiency: 0,
   },
-  BGE: {
-    key: "BGE",
+  TPL: {
+    key: "TPL",
     name: "태호 석유",
     price: 80,
     baseDrift: 0.0008,
@@ -65,8 +65,8 @@ const initialAssets: Record<TickerKey, Asset> = {
     efficiency: 0,
     riskEfficiency: 0,
   },
-  CSI: {
-    key: "CSI",
+  HSC: {
+    key: "HSC",
     name: "효림 시큐리티",
     price: 60,
     baseDrift: 0.0012,
@@ -80,8 +80,8 @@ const initialAssets: Record<TickerKey, Asset> = {
     efficiency: 0,
     riskEfficiency: 0,
   },
-  SHG: {
-    key: "SHG",
+  HFN: {
+    key: "HFN",
     name: "현빈 금융",
     price: 120,
     baseDrift: 0.0006,
@@ -95,8 +95,8 @@ const initialAssets: Record<TickerKey, Asset> = {
     efficiency: 0,
     riskEfficiency: 0,
   },
-  MWS: {
-    key: "MWS",
+  HSG: {
+    key: "HSG",
     name: "한스타그램",
     price: 40,
     baseDrift: 0.0015,

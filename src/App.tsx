@@ -7,6 +7,7 @@ import AiReportBox from "./components/AiReportBox";
 import ResultPopup from "./components/ResultPopup";
 import HelpPanel from "./components/HelpPanel";
 import LiveRanking from "./components/LiveRanking";
+import NewsBoard from "./components/NewsBoard";
 import type { Asset, TickerKey } from "./hooks/useMarketStore";
 import { scoreSinceSelection } from "./engine/skillScorer_temp";
 
@@ -22,8 +23,10 @@ export default function App() {
   const [evalStartPrices, setEvalStartPrices] = useState<Record<string, number> | null>(null);
   const [evalStartLens, setEvalStartLens] = useState<Record<string, number> | null>(null);
   const [results, setResults] = useState<any[]>([]);
-  const [isEvaluating, setIsEvaluating] = useState(false);
+  const [isEvaluating] = useState(false);
   const [topKey, setTopKey] = useState<TickerKey | null>(null);
+  const [showSelectMessage, setShowSelectMessage] = useState(false);
+  const [fadeOut, setFadeOut] = useState(false);
 
   useEffect(() => {
     startEngine();
@@ -44,7 +47,7 @@ export default function App() {
       }
       if (!evalStartPrices || !evalStartLens) captureEvalStartNow();
       setPhase("evaluating");
-      setCountdown(10);
+      setCountdown(20);
       return;
     }
 
@@ -82,8 +85,20 @@ export default function App() {
   const startThinking = () => {
     setSelected(null);
     setPhase("thinking");
-    setCountdown(3);
+    setCountdown(5);  // 선택 시간은 3초
+    setShowSelectMessage(true);  // 팝업 표시
+    setFadeOut(false);
+    
+    setTimeout(() => {
+      setFadeOut(true);
+    }, 1500);
+    
+    // 2초 후 팝업 숨김
+    setTimeout(() => {
+      setShowSelectMessage(false);
+    }, 2000);
   };
+
 
   const captureEvalStartNow = () => {
     const curr = useMarketStore.getState().assets;
@@ -103,7 +118,7 @@ export default function App() {
       setSelected(a.key);
       captureEvalStartNow();
       setPhase("evaluating");
-      setCountdown(10);
+      setCountdown(20);
     }
   };
 
@@ -127,7 +142,7 @@ export default function App() {
     >
       {/* 상단 */}
       <header className="flex items-center justify-between mb-5 px-4">
-        <h1 className="text-3xl font-bold text-indigo-700">AI Stock Game 💹</h1>
+        <h1 className="text-3xl font-bold text-indigo-700"></h1>
 
         <div className="flex items-center gap-3">
           {phase === "analysis" && (
@@ -153,31 +168,52 @@ export default function App() {
 
       {/* 본문 */}
       <main className="flex-1 flex gap-6 overflow-hidden">
-        {/* 왼쪽: 종목 그리드 */}
-        <section className="flex-1 grid grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-5 auto-rows-max">
-          {list.map((a) => (
-            <div
-              key={a.key}
-              onClick={() => {
-                if (!isEvaluating) handleCardClick(a);
-              }}
-              className={`transition-all duration-300 cursor-pointer ${
-                focus?.key === a.key ? "scale-105 z-10 shadow-xl" : "scale-100 opacity-90"
-              }`}
-            >
-              <TickerCard a={a} focusKey={focus?.key} topKey={topKey} />
-              <ChartPanel label={a.name} data={a.history} />
+        {/* 왼쪽: 종목 그리드 + 뉴스 */}
+        <section className="flex-1">
+          <div className="grid grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-5 auto-rows-max">
+            {/* 주식 카드들 */}
+            {list.map((a) => (
+              <div
+                key={a.key}
+                onClick={() => {
+                  if (!isEvaluating) handleCardClick(a);
+                }}
+                className={`transition-all duration-300 cursor-pointer ${
+                  focus?.key === a.key ? "scale-105 z-10 shadow-xl" : "scale-100 opacity-90"
+                }`}
+              >
+                <TickerCard a={a} focusKey={focus?.key} topKey={topKey} />
+                <ChartPanel label={a.name} data={a.history} />
+              </div>
+            ))}
+
+            {/* 뉴스 카드 - 2칸 차지 */}
+            <div className="col-span-2 h-64">
+              <NewsBoard />
             </div>
-          ))}
+          </div>
         </section>
 
         {/* 오른쪽: 리포트 + 도움말 */}
         <aside className="w-[360px] shrink-0 flex flex-col gap-4 transition-all duration-500">
           {focus && <AiReportBox focus={focus} />}
           {phase === "analysis" && <HelpPanel />}
-          {phase === "evaluating" && <LiveRanking assets={list} topKey={topKey} />}
+          {phase === "evaluating" && <LiveRanking assets={list} selectedKey={selected} />}
 
         </aside>
+      {/* 선택 안내 팝업 */}
+      {showSelectMessage && (
+        <div className={`fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 ${fadeOut ? 'animate-fade-out' : 'animate-fade-in'}`}>
+          <div className="text-center">
+            <p className="text-7xl font-black bg-gradient-to-r from-yellow-400 via-pink-500 to-purple-600 bg-clip-text text-transparent drop-shadow-2xl">
+              당신의 주식을 선택하세요!
+            </p>
+            <div className="mt-4 text-3xl font-bold text-white">⏰ ⚡ 💰</div>
+          </div>
+        </div>
+      )}
+
+
       </main>
 
       {/* 결과 팝업 */}

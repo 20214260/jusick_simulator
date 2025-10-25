@@ -24,7 +24,7 @@ const TickerCard: React.FC<Props> = ({ a, focusKey, topKey }) => {
       </div>
 
       <div className="text-2xl font-bold text-indigo-700 mt-1">
-        {a.price.toFixed(2)}{" "}
+        ${a.price.toFixed(2)}{" "}
         {isTop && <span className="ml-2 text-yellow-500 text-xl">🥇</span>}
       </div>
 

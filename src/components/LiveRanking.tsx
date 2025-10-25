@@ -4,10 +4,10 @@ import type { Asset } from "../hooks/useMarketStore";
 
 interface Props {
   assets: Asset[];
-  topKey: string | null;
+  selectedKey: string | null;
 }
 
-const LiveRanking: React.FC<Props> = ({ assets, topKey }) => {
+const LiveRanking: React.FC<Props> = ({ assets, selectedKey }) => {
   const ranked = [...assets]
     .sort((a, b) => b.riskEfficiency - a.riskEfficiency)
     .slice(0, 10);
@@ -19,20 +19,20 @@ const LiveRanking: React.FC<Props> = ({ assets, topKey }) => {
       </h2>
       <div className="space-y-2 transition-all duration-500">
         {ranked.map((a, i) => {
-          const isTop = a.key === topKey;
+          const isSelected = a.key === selectedKey;
 
           return (
             <div
               key={a.key}
               className={`flex justify-between items-center px-4 py-2 rounded-lg shadow-sm
                 transition-all duration-300 transform
-                ${isTop
-                  ? "bg-yellow-100 scale-105 animate-shake ring-2 ring-yellow-300"
+                ${isSelected
+                  ? "bg-gradient-to-r from-blue-100 to-indigo-100 scale-105 animate-pulse ring-2 ring-indigo-400"
                   : "bg-gray-50"}
               `}
             >
-              <span className={`font-medium ${isTop ? "text-yellow-800" : "text-gray-800"}`}>
-                {i + 1}. {a.name}
+              <span className={`font-medium ${isSelected ? "text-indigo-800 font-bold" : "text-gray-800"}`}>
+                {i + 1}. {a.name} {isSelected && "⭐"}
               </span>
               <span className={`text-sm font-semibold ${a.riskEfficiency >= 0 ? "text-green-600" : "text-red-500"}`}>
                 {a.riskEfficiency.toFixed(2)}

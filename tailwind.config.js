@@ -17,7 +17,8 @@ export default {
         'bg-transition': 'bgChange 5s ease-in-out forwards',
         'pulse': 'pulse 1s infinite',
         'float': 'float 3s ease-in-out inrinite',
-        'fade-in': 'fadeIn 0.5s ease-in-out',
+        'fade-in': 'fadeIn 0.5s ease-out forwards',
+        'fade-out': 'fadeOut 0.5s ease-in forwards',
       },
       keyframes: {
         shake: {
@@ -39,6 +40,14 @@ export default {
         bgChange: {
           '0%': { backgroundColor: '#e0f2fe' }, // 시작색 (sky-100)
           '100%': { backgroundColor: '#fef9c3' }, // 끝색 (yellow-100)
+        },
+        fadeIn: {
+          '0%': { opacity: '0', transform: 'scale(0.95) translateY(-10px)' },
+          '100%': { opacity: '1', transform: 'scale(1) translateY(0)' },
+        },
+        fadeOut: {
+          '0%': { opacity: '1', transform: 'scale(1) translateY(0)' },
+          '100%': { opacity: '0', transform: 'scale(0.95) translateY(-10px)' },
         },
       },
     },

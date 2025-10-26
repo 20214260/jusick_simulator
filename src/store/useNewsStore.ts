@@ -3,6 +3,7 @@ import type { TickerKey } from "../hooks/useMarketStore";
 
 export interface NewsEvent {
   id: string;
+  press: string;
   title: string;
   duration: number; // 초
   impacts: Partial<Record<TickerKey, [number, number]>>; // [min%, max%]
@@ -32,6 +33,9 @@ interface NewsState {
   setCurrentEvent: (event: NewsEvent | null) => void;
   addToHistory: (event: NewsEvent) => void;
   updateHistoryTime: () => void;
+
+  // ✅ 이거 추가
+  removeFromHistory: (eventId: string) => void;
 }
 
 export const useNewsStore = create<NewsState>((set) => ({
@@ -39,18 +43,22 @@ export const useNewsStore = create<NewsState>((set) => ({
   comments: [],
   currentEvent: null,
   newsHistory: [],
+
   addNews: (item) =>
     set((state) => ({
       news: [{ ...item, timeAgo: 0 }, ...state.news.slice(0, 10)],
     })),
+
   addComment: (text) =>
     set((state) => ({
       comments: [text, ...state.comments.slice(0, 20)],
     })),
+
   setCurrentEvent: (event) =>
     set(() => ({
       currentEvent: event,
     })),
+
   addToHistory: (event) =>
     set((state) => ({
       newsHistory: [
@@ -58,11 +66,20 @@ export const useNewsStore = create<NewsState>((set) => ({
         ...state.newsHistory.slice(0, 9), // 최대 10개 유지
       ],
     })),
+
   updateHistoryTime: () =>
     set((state) => ({
       newsHistory: state.newsHistory.map((item) => ({
         ...item,
         timeAgo: Math.floor((Date.now() - item.event.startTime) / 1000),
       })),
+    })),
+
+  // ✅ 여기에 따로 빼야 함!
+  removeFromHistory: (eventId: string) =>
+    set((state) => ({
+      newsHistory: state.newsHistory.filter(
+        (item) => item.event.id !== eventId
+      ),
     })),
 }));

@@ -4,6 +4,7 @@ import type { NewsEvent } from "../store/useNewsStore";
 
 interface NewsTemplate {
   id: string;
+  press: string;
   title: string;
   duration: [number, number];
   impacts: Partial<Record<TickerKey, [number, number]>>;
@@ -12,7 +13,8 @@ interface NewsTemplate {
 export const NEWS_TEMPLATES: NewsTemplate[] = [
   {
     id: "oil-expansion",
-    title: "분쟁 확대",
+    press: "한국경제 신문",
+    title: "분쟁 확대 [속보] 국경 긴장 고조… 전 세계 증시 ‘리스크 모드’ 전환",
     duration: [10, 30],
     impacts: {
       SCM: [10, 25],
@@ -24,7 +26,8 @@ export const NEWS_TEMPLATES: NewsTemplate[] = [
   },
   {
     id: "won-rate",
-    title: "휴전/완화",
+    press: "한국경제 신문",
+    title: "휴전/완화 [긴급] 휴전 소식에 시장 안도 랠리… 위험자산 회복세",
     duration: [20, 60],
     impacts: {
       SCM: [-10, -5],
@@ -36,7 +39,8 @@ export const NEWS_TEMPLATES: NewsTemplate[] = [
   },
   {
     id: "supply-issue",
-    title: "공급 차질",
+    press: "트렌드투데이",
+    title: "공급차질 [속보] 공급망 붕괴 우려 확산… 제조·화학 업종 강세",
     duration: [10, 20],
     impacts: {
       SCM: [5, 15],
@@ -47,7 +51,8 @@ export const NEWS_TEMPLATES: NewsTemplate[] = [
   },
   {
     id: "won-weak",
-    title: "증산/완화",
+    press: "트렌드투데이",
+    title: "증산/완화 [단신] 증산 소식에 유가 급락… 인플레 완화 기대감 확산",
     duration: [10, 10],
     impacts: {
       SCM: [-20, -10],
@@ -58,7 +63,8 @@ export const NEWS_TEMPLATES: NewsTemplate[] = [
   },
   {
     id: "cyber-attack",
-    title: "대형 해킹",
+    press: "머니투데이마켓",
+    title: "대형 해킹 [속보] 글로벌 해킹 사태 발생… 보안주 폭등, 금융권 타격",
     duration: [5, 10],
     impacts: {
       SCM: [-10, -5],
@@ -70,7 +76,8 @@ export const NEWS_TEMPLATES: NewsTemplate[] = [
   },
   {
     id: "rate-cut",
-    title: "금리 인하",
+    press: "머니투데이마켓",
+    title: "금리 인하 [긴급] 기준금리 전격 인하… 증시 전반 상승 전환",
     duration: [15, 25],
     impacts: {
       SCM: [10, 20],
@@ -82,7 +89,8 @@ export const NEWS_TEMPLATES: NewsTemplate[] = [
   },
   {
     id: "rate-hike",
-    title: "금리 인상",
+    press: "테크노미뉴스",
+    title: "금리 인상 [속보] 금리 인상 단행… 증시 급락, 투자심리 얼어붙어",
     duration: [10, 20],
     impacts: {
       SCM: [-20, -10],
@@ -93,7 +101,8 @@ export const NEWS_TEMPLATES: NewsTemplate[] = [
   },
   {
     id: "factory-explosion",
-    title: "밈 폭발",
+    press: "테크노미뉴스",
+    title: "밈 폭발 [속보] ‘밈 주식’ 광풍… 단타 세력 대규모 진입",
     duration: [5, 10],
     impacts: {
       SCM: [20, 40],
@@ -105,7 +114,8 @@ export const NEWS_TEMPLATES: NewsTemplate[] = [
   },
   {
     id: "influencer-crackdown",
-    title: "인플루언서 탄생",
+    press: "이코노믹데일리",
+    title: "인플루언서 탄생 [속보] 슈퍼 인플루언서 등장… SNS주 폭등세",
     duration: [5, 10],
     impacts: {
       SCM: [5, 15],
@@ -115,7 +125,8 @@ export const NEWS_TEMPLATES: NewsTemplate[] = [
   },
   {
     id: "foreign-investment",
-    title: "물류 차질",
+    press: "이코노믹데일리",
+    title: "물류 차질 [단신] 항만 마비·운송 중단… 공급망 위기 재점화",
     duration: [6, 10],
     impacts: {
       SCM: [10, 25],
@@ -126,7 +137,8 @@ export const NEWS_TEMPLATES: NewsTemplate[] = [
   },
   {
     id: "ai-boom",
-    title: "AI 호황 뉴스",
+    press: "오늘의핫이슈",
+    title: "AI 호황 뉴스 [속보] AI 산업 폭발적 성장세… 기술주 일제 강세",
     duration: [10, 15],
     impacts: {
       SCM: [15, 30],
@@ -138,7 +150,8 @@ export const NEWS_TEMPLATES: NewsTemplate[] = [
   },
   {
     id: "ai-issue",
-    title: "AI 부작용/반발",
+    press: "오늘의핫이슈",
+    title: "AI 부작용/반발 [속보] AI 규제 강화 논의… 기술 섹터 급락세",
     duration: [10, 15],
     impacts: {
       SCM: [-20, -10],
@@ -161,6 +174,7 @@ export function createRandomNewsEvent(): NewsEvent {
 
   return {
     id: `${template.id}-${now}`,
+    press: template.press || "뉴스", 
     title: template.title,
     duration: duration,
     impacts: template.impacts,

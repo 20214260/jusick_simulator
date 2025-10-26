@@ -8,10 +8,14 @@ import ResultPopup from "./components/ResultPopup";
 import HelpPanel from "./components/HelpPanel";
 import LiveRanking from "./components/LiveRanking";
 import NewsBoard from "./components/NewsBoard";
+import MobileCommentPanel from "./components/MobileCommentPanel";
+import { useCommentStore } from "./store/useCommentStore";
+import { useNormalCommentEngine } from "./engine/NormalCommentEngine";
 import type { Asset, TickerKey } from "./hooks/useMarketStore";
 import { scoreSinceSelection } from "./engine/skillScorer_temp";
 
 export default function App() {
+  useNormalCommentEngine();
   const { assets } = useMarketStore();
   const list = Object.values(assets);
   const [focus, setFocus] = useState<Asset | null>(list[0] || null);
@@ -27,6 +31,11 @@ export default function App() {
   const [topKey, setTopKey] = useState<TickerKey | null>(null);
   const [showSelectMessage, setShowSelectMessage] = useState(false);
   const [fadeOut, setFadeOut] = useState(false);
+
+  const { addComment } = useCommentStore();
+  useEffect(() => {
+    addComment("💬 주식 시뮬레이터에 오신 것을 환영합니다!", "left");
+  }, []);
 
   useEffect(() => {
     startEngine();
@@ -85,20 +94,18 @@ export default function App() {
   const startThinking = () => {
     setSelected(null);
     setPhase("thinking");
-    setCountdown(5);  // 선택 시간은 3초
-    setShowSelectMessage(true);  // 팝업 표시
+    setCountdown(5);
+    setShowSelectMessage(true);
     setFadeOut(false);
-    
+
     setTimeout(() => {
       setFadeOut(true);
     }, 1500);
-    
-    // 2초 후 팝업 숨김
+
     setTimeout(() => {
       setShowSelectMessage(false);
     }, 2000);
   };
-
 
   const captureEvalStartNow = () => {
     const curr = useMarketStore.getState().assets;
@@ -134,7 +141,7 @@ export default function App() {
 
   return (
     <div
-      className={`min-h-screen p-6 flex flex-col  ${
+      className={`min-h-screen p-6 flex flex-col ${
         phase === "evaluating"
           ? "animate-bg-transition"
           : "bg-gradient-to-br from-indigo-100 via-sky-100 to-purple-100 transition-all duration-700"
@@ -168,10 +175,9 @@ export default function App() {
 
       {/* 본문 */}
       <main className="flex-1 flex gap-6 overflow-hidden">
-        {/* 왼쪽: 종목 그리드 + 뉴스 */}
+        {/* 왼쪽: 종목 + 뉴스 + 커뮤니티 */}
         <section className="flex-1">
           <div className="grid grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-5 auto-rows-max">
-            {/* 주식 카드들 */}
             {list.map((a) => (
               <div
                 key={a.key}
@@ -187,33 +193,34 @@ export default function App() {
               </div>
             ))}
 
-            {/* 뉴스 카드 - 2칸 차지 */}
+            {/* 뉴스 */}
             <div className="col-span-2 h-64">
               <NewsBoard />
+            </div>
+
+            {/* 오픈채팅 */}
+            <div className="col-span-2 h-[500px] mt-4">
+              <MobileCommentPanel />
             </div>
           </div>
         </section>
 
-        {/* 오른쪽: 리포트 + 도움말 */}
-        <aside className="w-[360px] shrink-0 flex flex-col gap-4 transition-all duration-500">
+        {/* 오른쪽: 리포트 + 지표 도움말 이동 */}
+        <aside className="w-[600px] shrink-0 flex flex-col gap-4">
+          {/* AI 리포트 박스 */}
           {focus && <AiReportBox focus={focus} />}
+
+          {/* ✅ 도움말을 오픈채팅 옆으로 이동 */}
           {phase === "analysis" && <HelpPanel />}
+
+          {/* 평가 중이면 실시간 랭킹 표시 */}
           {phase === "evaluating" && <LiveRanking assets={list} selectedKey={selected} />}
 
-        </aside>
-      {/* 선택 안내 팝업 */}
-      {showSelectMessage && (
-        <div className={`fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 ${fadeOut ? 'animate-fade-out' : 'animate-fade-in'}`}>
-          <div className="text-center">
-            <p className="text-7xl font-black bg-gradient-to-r from-yellow-400 via-pink-500 to-purple-600 bg-clip-text text-transparent drop-shadow-2xl">
-              당신의 주식을 선택하세요!
-            </p>
-            <div className="mt-4 text-3xl font-bold text-white">⏰ ⚡ 💰</div>
+          {/* ✅ 아래 여백에 캐릭터 자리 확보 (아직 캐릭터는 X) */}
+          <div className="mt-8 h-[150px] flex justify-center items-center opacity-40 border-2 border-dashed border-indigo-300 rounded-xl">
+            (AI 캐릭터 자리)
           </div>
-        </div>
-      )}
-
-
+        </aside>
       </main>
 
       {/* 결과 팝업 */}

@@ -23,13 +23,6 @@ const metrics = [
     color: "text-rose-600"
   },
   {
-    icon: "🔁",
-    name: "추세 일관성 (Trend Stability)",
-    desc: "상승 흐름이 얼마나 꾸준한지를 나타냅니다.",
-    good: "높을수록 좋습니다",
-    color: "text-emerald-600"
-  },
-  {
     icon: "🧭",
     name: "효율성 (Efficiency)",
     desc: "가격 변동 중 실제 상승이 얼마나 효율적인지를 나타냅니다.",

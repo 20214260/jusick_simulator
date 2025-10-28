@@ -100,7 +100,7 @@ export default function NewsBoard() {
   }, [updateHistoryTime]);
 
   return (
-    <div className="bg-white rounded-xl shadow-lg p-4 h-[420px] overflow-y-auto">
+    <div className="bg-white rounded-xl shadow-lg p-4 h-[440px] overflow-y-auto">
       <h2 className="text-xl font-bold text-green-600 mb-3 flex items-center gap-2">
         <span className="bg-green-500 text-white px-2 py-0.5 text-sm rounded">Live</span>
         <span className="bg-green-500 text-white px-2 py-0.5 text-sm rounded">News</span>

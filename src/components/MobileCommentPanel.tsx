@@ -1,6 +1,6 @@
 import { useCommentStore } from "../store/useCommentStore";
 import { motion, AnimatePresence } from "framer-motion";
-import { useRef } from "react";
+import { useRef, useEffect, useState } from "react";
 
 // ✅ 닉네임 키워드 세트
 const firstKeywords = [
@@ -53,12 +53,83 @@ export default function MobileCommentPanel() {
     return userMap.current.get(id)!;
   };
 
+  // ✅ 인원수 상태 및 랜덤 변동 로직
+  const [memberCount, setMemberCount] = useState(
+    Math.floor(Math.random() * 21) + 80 // 80~100 사이 초기값
+  );
+
+  useEffect(() => {
+    let isRunning = true;
+
+    const updateCount = () => {
+      if (!isRunning) return;
+
+      setMemberCount((prev) => {
+        // -2~+2 사이의 랜덤 변화 (너무 급하지 않게)
+        const change = Math.floor(Math.random() * 5) - 2;
+        let newCount = prev + change;
+        if (newCount < 80) newCount = 80;
+        if (newCount > 100) newCount = 100;
+        return newCount;
+      });
+
+      // 1~5초 랜덤 주기
+      const nextDelay = 1000 + Math.random() * 4000;
+      setTimeout(updateCount, nextDelay);
+    };
+
+    updateCount();
+
+    return () => {
+      isRunning = false;
+    };
+  }, []);
+
   return (
-    <div className="bg-[#DDE1E6] w-[420px] h-[500px] rounded-2xl shadow-xl p-4 flex flex-col">
-      <h2 className="text-center text-gray-700 font-bold mb-3">💬 TH 주식 갤러리</h2>
+    <div className="bg-[#FAF9F7] w-[420px] h-[460px] rounded-3xl shadow-xl flex flex-col overflow-hidden border border-gray-200">
+      {/* 상단 헤더 */}
+      <div className="bg-[#FEE500] text-gray-900 flex items-center justify-between px-4 py-2 rounded-t-3xl border-b border-yellow-200">
+        {/* 왼쪽: 프로필 사진들 + 방 정보 */}
+        <div className="flex items-center gap-3">
+          <div className="flex -space-x-2">
+            <img
+              src="https://i.pravatar.cc/40?img=3"
+              className="w-8 h-8 rounded-full border-2 border-[#FEE500]"
+            />
+            <img
+              src="https://i.pravatar.cc/40?img=7"
+              className="w-8 h-8 rounded-full border-2 border-[#FEE500]"
+            />
+            <img
+              src="https://i.pravatar.cc/40?img=10"
+              className="w-8 h-8 rounded-full border-2 border-[#FEE500]"
+            />
+          </div>
+          <div className="flex flex-col leading-tight">
+            <span className="font-semibold text-[15px]">TH 주식 갤러리</span>
+            <span className="text-[11px] text-gray-600">👥 {memberCount}</span>
+          </div>
+        </div>
+
+        {/* 오른쪽: 아이콘 버튼 */}
+        <div className="flex items-center gap-3 text-gray-800">
+          <button className="hover:text-gray-600 bg-transparent border-none outline-none p-0 m-0">
+            <i className="fa-solid fa-magnifying-glass text-[14px]"></i>
+          </button>
+          <button className="hover:text-gray-600 bg-transparent border-none outline-none p-0 m-0">
+            <i className="fa-solid fa-phone text-[14px]"></i>
+          </button>
+          <button className="hover:text-gray-600 bg-transparent border-none outline-none p-0 m-0">
+            <i className="fa-solid fa-video text-[14px]"></i>
+          </button>
+          <button className="hover:text-gray-600 bg-transparent border-none outline-none p-0 m-0">
+            <i className="fa-solid fa-bars text-[14px]"></i>
+          </button>
+        </div>
+      </div>
 
       {/* 코멘트 리스트 */}
-      <div className="flex-1 overflow-y-auto space-y-4 px-2 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-transparent">
+      <div className="flex-1 overflow-y-auto p-4 space-y-4 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-transparent">
         <AnimatePresence>
           {comments.map((c) => {
             const isRight = c.side === "right";
@@ -84,11 +155,11 @@ export default function MobileCommentPanel() {
                   <img
                     src={avatar}
                     alt={name}
-                    className="w-8 h-8 rounded-full shadow-sm"
+                    className="w-9 h-9 rounded-full border shadow-sm"
                   />
                 )}
 
-                {/* 말풍선 */}
+                {/* 말풍선 영역 */}
                 <div
                   className={`flex flex-col max-w-[70%] ${
                     isRight ? "items-end" : "items-start"
@@ -97,16 +168,20 @@ export default function MobileCommentPanel() {
                   {!isRight && (
                     <p className="text-xs text-gray-600 mb-0.5 ml-1">{name}</p>
                   )}
+
+                  {/* 말풍선 */}
                   <div
-                    className={`px-3 py-2 rounded-2xl text-sm leading-snug shadow-md ${
+                    className={`px-4 py-2 rounded-2xl text-sm leading-snug shadow-md ${
                       isRight
-                        ? "bg-[#9FC5F8] text-gray-900 rounded-br-none"
-                        : "bg-white text-gray-900 rounded-bl-none"
+                        ? "bg-[#AEE6A5] text-gray-900 rounded-br-none"
+                        : "bg-white text-gray-900 border border-gray-200 rounded-bl-none"
                     }`}
                   >
                     {c.text}
                   </div>
-                  <span className="text-[10px] text-gray-400 mt-0.5">
+
+                  {/* 시간 */}
+                  <span className="text-[10px] text-gray-400 mt-0.5 self-end mr-1">
                     {time}
                   </span>
                 </div>
@@ -116,7 +191,7 @@ export default function MobileCommentPanel() {
                   <img
                     src={avatar}
                     alt={name}
-                    className="w-8 h-8 rounded-full shadow-sm"
+                    className="w-9 h-9 rounded-full border shadow-sm"
                   />
                 )}
               </motion.div>
